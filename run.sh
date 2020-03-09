@@ -4,6 +4,11 @@
 apt-get update
 apt-get install -y git supervisor vnstat
 apt-get install net-tools -y
+wget https://cdn.ipip.net/17mon/besttrace4linux.zip
+
+# 路由跟踪
+unzip besttrace4linux.zip
+chmod +x besttrac
 
 # 配置dns
 echo -e "options timeout:1 attempts:1 rotate\nnameserver 8.8.8.8\nnameserver 8.8.4.4" >/etc/resolv.conf
