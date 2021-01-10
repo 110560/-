@@ -13,11 +13,13 @@ echo -e "options timeout:1 attempts:1 rotate\nnameserver 8.8.8.8\nnameserver 8.8
 timedatectl set-timezone Asia/Shanghai
 
 
+
 cd ~
-git clone https://github.com/LEE-Blog/shadowsocksr.git
+git clone https://github.com/ZBrettonYe/ProxyPanel_shadowsocksr.git
+mv ProxyPanel_shadowsocksr shadowsocksr 
 cd shadowsocksr
-sh setup_cymysql2.sh
-sh initcfg.sh
+apt-get install python-pip -y
+pip install -r requestment.txt
 
 
 cat  >> /etc/supervisor/conf.d/ssr.conf <<EOF
