@@ -1,3 +1,4 @@
+apt-get install git -y
 cd ~
 git clone https://github.com/ZBrettonYe/ProxyPanel_shadowsocksr.git
 mv ProxyPanel_shadowsocksr shadowsocksr 
