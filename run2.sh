@@ -1,6 +1,6 @@
 apt-get install -y supervisor vnstat
 apt-get install net-tools -y
-echo -e "options timeout:1 attempts:1 rotate\nnameserver 8.8.8.8\nnameserver 8.8.4.4" >/etc/resolv.conf
+echo -e "options timeout:1 attempts:1 rotate\nnameserver 1.1.1.1 \nnameserver 1.0.0.1 " >/etc/resolv.conf;
 timedatectl set-timezone Asia/Shanghai
 #echo "0 6 * * * supervisorctl restart ssr" >> /var/spool/cron/crontabs/root
 
