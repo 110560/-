@@ -19,11 +19,31 @@ else
     echo "当月出站流量：$tx"
 fi
 
-# 如果出站流量达到或超过1.97 TiB，则执行关机操作
+# 如果出站流量达到或超过1.97 TiB，则发送通知并执行关机操作
 threshold="1.97"
 tx_value=$(echo $tx | sed 's/[^0-9.]//g')
 
 if (( $(echo "$tx_value >= $threshold" | bc -l) )); then
+    # 获取外网 IP
+    external_ip=$(curl -s ifconfig.me)
+
+    # 获取当前日期和时间
+    current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
+
+    # Telegram Bot API Token
+    bot_token="5162966701:AAGFVyYWQ45A_eaSYi4XlVYDvHzZ6frSmXQ"
+
+    # Chat ID
+    chat_id="461449457"  # 替换为实际的 Chat ID
+
+    # 消息内容
+    message="服务器即将关机。外网 IP: $external_ip 时间: $current_datetime"
+
+    # 发送消息到 Telegram
+    curl -s -X POST "https://api.telegram.org/bot${bot_token}/sendMessage" \
+         -d chat_id="${chat_id}" \
+         -d text="${message}"
+
     echo "出站流量达到或超过 $threshold TiB，系统即将关机。"
     sudo shutdown -h now
 fi
