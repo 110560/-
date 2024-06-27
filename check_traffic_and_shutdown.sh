@@ -44,11 +44,12 @@ fi
 # 检查单位是否为 TiB
 if [[ "$tx_unit" == "TiB" ]]; then
     threshold="1.90"
+    shutdown_threshold="1.97"
     reminder_file="/var/tmp/reminder_sent_$current_month"
+    
+    # 检查是否达到提醒阈值 1.90 TiB
     if (( $(echo "$tx_value >= $threshold" | bc -l) )); then
-        if [[ -f "$reminder_file" ]]; then
-            echo "提醒消息已经发送过，无需重复发送。"
-        else
+        if [[ ! -f "$reminder_file" ]]; then
             # 获取外网 IP
             external_ip=$(curl -s ifconfig.me)
 
@@ -61,7 +62,7 @@ if [[ "$tx_unit" == "TiB" ]]; then
             chat_id="461449457"  # 替换为实际的 Chat ID
 
             # 消息内容
-            message="出站流量已达到 1.90 TiB。外网 IP: $external_ip 时间: $current_datetime"
+            message="出站流量已达到 $threshold TiB。外网 IP: $external_ip 时间: $current_datetime"
 
             # 发送消息到 Telegram
             curl -s -X POST "https://api.telegram.org/bot${bot_token}/sendMessage" \
@@ -73,31 +74,31 @@ if [[ "$tx_unit" == "TiB" ]]; then
             # 创建提醒文件
             touch "$reminder_file"
         fi
-
-        if (( $(echo "$tx_value >= 1.97" | bc -l) )); then
-            # 获取外网 IP
-            external_ip=$(curl -s ifconfig.me)
-
-            # 获取当前日期和时间
-            current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
-
-            # 提醒内容
-            shutdown_message="服务器即将关机。外网 IP: $external_ip 时间: $current_datetime"
-
-            # 发送关机提醒消息到 Telegram
-            curl -s -X POST "https://api.telegram.org/bot${bot_token}/sendMessage" \
-                 -d chat_id="${chat_id}" \
-                 -d text="${shutdown_message}"
-
-            echo "出站流量达到或超过 1.97 TiB，系统即将关机提醒已发送。"
-            echo "出站流量达到或超过 1.97 TiB，系统即将关机。"
-            sudo shutdown -h now
-        else
-            echo "当前出站流量为 $tx_value TiB，未达到关机阈值 1.97 TiB。"
-        fi
-    else
-        echo "当前出站流量为 $tx_value TiB，未达到提醒阈值 $threshold TiB。"
     fi
+
+    # 检查是否达到关机阈值 1.97 TiB
+    if (( $(echo "$tx_value >= $shutdown_threshold" | bc -l) )); then
+        # 获取外网 IP
+        external_ip=$(curl -s ifconfig.me)
+
+        # 获取当前日期和时间
+        current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
+
+        # 发送关机提醒消息到 Telegram
+        shutdown_message="服务器即将关机！出站流量已达到 $shutdown_threshold TiB。外网 IP: $external_ip 时间: $current_datetime"
+        curl -s -X POST "https://api.telegram.org/bot${bot_token}/sendMessage" \
+             -d chat_id="${chat_id}" \
+             -d text="${shutdown_message}"
+
+        echo "出站流量达到或超过 $shutdown_threshold TiB，系统即将关机提醒已发送。"
+        echo "出站流量达到或超过 $shutdown_threshold TiB，系统即将关机。"
+        sudo shutdown -h now
+    else
+        echo "当前出站流量为 $tx_value TiB，未达到关机阈值 $shutdown_threshold TiB。"
+    fi
+
+    # 删除一个月前的提醒文件
+    find /var/tmp/ -name "reminder_sent_*" -mtime +25 -delete >/dev/null 2>&1
 else
     echo "当前出站流量单位为 $tx_unit，不是 TiB，无需关机。"
 fi
