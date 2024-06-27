@@ -41,18 +41,14 @@ if [[ "$tx_unit" == "GiB" ]]; then
     tx_unit="TiB"
 fi
 
-# 标志文件路径
-FLAG_FILE="/tmp/traffic_alert_sent.flag"
-
 # 检查单位是否为 TiB
 if [[ "$tx_unit" == "TiB" ]]; then
-    threshold="1.97"
-    alert_threshold="1.90"
-
-    # 检查是否达到发送消息的阈值
-    if (( $(echo "$tx_value >= $alert_threshold" | bc -l) )); then
-        # 检查是否已经发送过消息
-        if [ ! -f "$FLAG_FILE" ]; then
+    threshold="1.90"
+    reminder_file="/var/tmp/reminder_sent_$current_month"
+    if (( $(echo "$tx_value >= $threshold" | bc -l) )); then
+        if [[ -f "$reminder_file" ]]; then
+            echo "提醒消息已经发送过，无需重复发送。"
+        else
             # 获取外网 IP
             external_ip=$(curl -s ifconfig.me)
 
@@ -60,40 +56,33 @@ if [[ "$tx_unit" == "TiB" ]]; then
             current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
 
             # Telegram Bot API Token
-            bot_token="5162966701:AAGFVyYWQ45A_eaSYi4XlVYDvHzZ6frSmXQ"  # 替换为实际的 Bot Token
+            bot_token="5162966701:AAGFVyYWQ45A_eaSYi4XlVYDvHzZ6frSmXQ"
 
             # Chat ID
-            chat_id="461449457"  # 固定的 Chat ID
+            chat_id="461449457"  # 替换为实际的 Chat ID
 
             # 消息内容
-            alert_message="流量已达到1.9TiB，外网IP: $external_ip，时间: $current_datetime"
+            message="出站流量已达到 1.90 TiB。外网 IP: $external_ip 时间: $current_datetime"
 
             # 发送消息到 Telegram
             curl -s -X POST "https://api.telegram.org/bot${bot_token}/sendMessage" \
                  -d chat_id="${chat_id}" \
-                 -d text="${alert_message}"
+                 -d text="${message}"
 
-            # 创建标志文件，表示消息已发送
-            touch "$FLAG_FILE"
+            echo "出站流量达到或超过 $threshold TiB，提醒消息已发送。"
+
+            # 创建提醒文件
+            touch "$reminder_file"
         fi
-    fi
 
-    if (( $(echo "$tx_value >= $threshold" | bc -l) )); then
-        # 获取当前日期和时间
-        current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
-
-        # 消息内容
-        message="服务器即将关机。外网 IP: $external_ip 时间: $current_datetime"
-
-        # 发送消息到 Telegram
-        curl -s -X POST "https://api.telegram.org/bot${bot_token}/sendMessage" \
-             -d chat_id="${chat_id}" \
-             -d text="${message}"
-
-        echo "出站流量达到或超过 $threshold TiB，系统即将关机。"
-        sudo shutdown -h now
+        if (( $(echo "$tx_value >= 1.97" | bc -l) )); then
+            echo "出站流量达到或超过 1.97 TiB，系统即将关机。"
+            sudo shutdown -h now
+        else
+            echo "当前出站流量为 $tx_value TiB，未达到关机阈值 1.97 TiB。"
+        fi
     else
-        echo "当前出站流量为 $tx_value TiB，未达到关机阈值 $threshold TiB。"
+        echo "当前出站流量为 $tx_value TiB，未达到提醒阈值 $threshold TiB。"
     fi
 else
     echo "当前出站流量单位为 $tx_unit，不是 TiB，无需关机。"
