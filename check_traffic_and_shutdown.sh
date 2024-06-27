@@ -41,21 +41,43 @@ if [[ "$tx_unit" == "GiB" ]]; then
     tx_unit="TiB"
 fi
 
+# 标志文件路径
+FLAG_FILE="/tmp/traffic_alert_sent.flag"
+
 # 检查单位是否为 TiB
 if [[ "$tx_unit" == "TiB" ]]; then
     threshold="1.97"
-    if (( $(echo "$tx_value >= $threshold" | bc -l) )); then
-        # 获取外网 IP
-        external_ip=$(curl -s ifconfig.me)
+    alert_threshold="1.90"
 
+    # 检查是否达到发送消息的阈值
+    if (( $(echo "$tx_value >= $alert_threshold" | bc -l) )); then
+        # 检查是否已经发送过消息
+        if [ ! -f "$FLAG_FILE" ]; then
+            # 获取外网 IP
+            external_ip=$(curl -s ifconfig.me)
+
+            # Telegram Bot API Token
+            bot_token="YOUR_BOT_TOKEN"  # 替换为实际的 Bot Token
+
+            # Chat ID
+            chat_id="461449457"  # 固定的 Chat ID
+
+            # 消息内容
+            alert_message="流量已达到1.9TiB，外网IP: $external_ip"
+
+            # 发送消息到 Telegram
+            curl -s -X POST "https://api.telegram.org/bot${bot_token}/sendMessage" \
+                 -d chat_id="${chat_id}" \
+                 -d text="${alert_message}"
+
+            # 创建标志文件，表示消息已发送
+            touch "$FLAG_FILE"
+        fi
+    fi
+
+    if (( $(echo "$tx_value >= $threshold" | bc -l) )); then
         # 获取当前日期和时间
         current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
-
-        # Telegram Bot API Token
-        bot_token="5162966701:AAGFVyYWQ45A_eaSYi4XlVYDvHzZ6frSmXQ"
-
-        # Chat ID
-        chat_id="461449457"  # 替换为实际的 Chat ID
 
         # 消息内容
         message="服务器即将关机。外网 IP: $external_ip 时间: $current_datetime"
