@@ -56,8 +56,7 @@ if [[ "$tx_unit" == "TiB" ]]; then
             current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
 
             # Telegram Bot API Token
-            bot_token="5162966701:AAGFVyYWQ45A_eaSYi4XlVYDvHzZ6frSmXQ"
-
+            bot_token="5162966701:AAGFVyYWQ45A_eaSYi4XlVYDvHzZ6frSmXQ"  # 替换为实际的 Bot Token
             # Chat ID
             chat_id="461449457"  # 替换为实际的 Chat ID
 
@@ -76,6 +75,21 @@ if [[ "$tx_unit" == "TiB" ]]; then
         fi
 
         if (( $(echo "$tx_value >= 1.97" | bc -l) )); then
+            # 获取外网 IP
+            external_ip=$(curl -s ifconfig.me)
+
+            # 获取当前日期和时间
+            current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
+
+            # 提醒内容
+            shutdown_message="服务器即将关机。外网 IP: $external_ip 时间: $current_datetime"
+
+            # 发送关机提醒消息到 Telegram
+            curl -s -X POST "https://api.telegram.org/bot${bot_token}/sendMessage" \
+                 -d chat_id="${chat_id}" \
+                 -d text="${shutdown_message}"
+
+            echo "出站流量达到或超过 1.97 TiB，系统即将关机提醒已发送。"
             echo "出站流量达到或超过 1.97 TiB，系统即将关机。"
             sudo shutdown -h now
         else
