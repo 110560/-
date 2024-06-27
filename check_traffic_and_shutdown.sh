@@ -56,14 +56,17 @@ if [[ "$tx_unit" == "TiB" ]]; then
             # 获取外网 IP
             external_ip=$(curl -s ifconfig.me)
 
+            # 获取当前日期和时间
+            current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
+
             # Telegram Bot API Token
-            bot_token="5162966701:AAGFVyYWQ45A_eaSYi4XlVYDvHzZ6frSmXQ"  # 替换为实际的 Bot Token
+            bot_token="YOUR_BOT_TOKEN"  # 替换为实际的 Bot Token
 
             # Chat ID
             chat_id="461449457"  # 固定的 Chat ID
 
             # 消息内容
-            alert_message="流量已达到1.9TiB，外网IP: $external_ip"
+            alert_message="流量已达到1.9TiB，外网IP: $external_ip，时间: $current_datetime"
 
             # 发送消息到 Telegram
             curl -s -X POST "https://api.telegram.org/bot${bot_token}/sendMessage" \
