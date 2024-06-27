@@ -60,7 +60,7 @@ if [[ "$tx_unit" == "TiB" ]]; then
             current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
 
             # Telegram Bot API Token
-            bot_token="YOUR_BOT_TOKEN"  # 替换为实际的 Bot Token
+            bot_token="5162966701:AAGFVyYWQ45A_eaSYi4XlVYDvHzZ6frSmXQ"  # 替换为实际的 Bot Token
 
             # Chat ID
             chat_id="461449457"  # 固定的 Chat ID
