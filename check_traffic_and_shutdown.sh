@@ -1,16 +1,17 @@
 #!/bin/bash
-
+#兼容vnStat 1.18 2.6
 # 检查是否安装了 bc 工具
 if ! command -v bc &> /dev/null; then
     echo "bc 工具未安装。请先安装 bc 工具。"
     exit 1
 fi
 
-# 获取当前月份的简称和年份
-current_month=$(date +'%b '\''%y')
+# 获取当前月份和年份
+current_month_v2=$(date +'%Y-%m')
+current_month_v1=$(date +'%b '\''%y')
 
 # 提醒文件路径
-reminder_file="/var/tmp/reminder_sent_$current_month"
+reminder_file="/var/tmp/reminder_sent_$current_month_v1"
 
 # 获取外网 IP
 external_ip=$(curl -s ifconfig.me)
@@ -19,22 +20,29 @@ external_ip=$(curl -s ifconfig.me)
 current_datetime=$(date '+%Y-%m-%d %H:%M:%S')
 
 # Telegram Bot API Token
-bot_token="5162966701:AAGFVyYWQ45A_eaSYi4XlVYDvHzZ6frSmXQ"  # 替换为实际的 Bot Token
+bot_token="5162966701:AAGFVyYWQ45A_eaSYi4XlVYDvHzZ6frSmXQ"
 # Chat ID
-chat_id="461449457"  # 替换为实际的 Chat ID
+chat_id="461449457"
 
 # 使用 vnstat 获取当前月份的出站流量
-tx=$(vnstat -m | grep "$current_month" | awk '{print $6, $7}')
+tx_v1=$(vnstat -m | grep "$current_month_v1" | awk '{print $6, $7}')
+tx_v2=$(vnstat -m | grep "$current_month_v2" | awk '{print $4, $5}')
 
-# 检查是否成功获取到出站流量
-if [[ -z "$tx" ]]; then
+# 检查并选择有效的出站流量
+if [[ -n "$tx_v2" ]]; then
+    tx="$tx_v2"
+    current_month="$current_month_v2"
+elif [[ -n "$tx_v1" ]]; then
+    tx="$tx_v1"
+    current_month="$current_month_v1"
+else
     echo "未能获取到当前月份的出站流量。"
     exit 1
 fi
 
 # 解析出站流量的数值和单位
-tx_value=$(echo $tx | awk '{print $1}')
-tx_unit=$(echo $tx | awk '{print $2}')
+tx_value=$(echo "$tx" | awk '{print $1}')
+tx_unit=$(echo "$tx" | awk '{print $2}')
 
 # 默认单位为 GiB
 if [[ -z "$tx_unit" ]]; then
@@ -77,7 +85,7 @@ if [[ "$tx_unit" == "TiB" ]]; then
         echo "出站流量达到或超过 $shutdown_threshold TiB，系统即将关机提醒已发送。"
         echo "出站流量达到或超过 $shutdown_threshold TiB，系统即将关机。"
         # 执行关机操作
-         shutdown -h now
+        shutdown -h now
     else
         echo "当前出站流量为 $tx_value TiB，未达到关机阈值 $shutdown_threshold TiB。"
     fi
