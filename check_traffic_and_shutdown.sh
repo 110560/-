@@ -85,7 +85,7 @@ if [[ "$tx_unit" == "TiB" ]]; then
         echo "出站流量达到或超过 $shutdown_threshold TiB，系统即将关机提醒已发送。"
         echo "出站流量达到或超过 $shutdown_threshold TiB，系统即将关机。"
         # 执行关机操作
-        shutdown -h now
+        /sbin/shutdown -h now
     else
         echo "当前出站流量为 $tx_value TiB，未达到关机阈值 $shutdown_threshold TiB。"
     fi
