@@ -38,17 +38,27 @@ echo -e "options timeout:1 attempts:1 rotate\nnameserver 1.1.1.1\nnameserver 208
 # 设置时区
 timedatectl set-timezone Asia/Shanghai
 
-# 创建Supervisor配置文件
-cat > /etc/supervisor/conf.d/ssr.conf <<EOF
+# 检查并创建Supervisor配置文件
+if [ ! -f /etc/supervisor/conf.d/ssr.conf ]; then
+    cat > /etc/supervisor/conf.d/ssr.conf <<EOF
 [program:ssr]
 command=python /root/shadowsocksr/server.py
 autorestart=true
 autostart=true
 user=root
 EOF
+    echo "Supervisor configuration file created."
+else
+    echo "Supervisor configuration file already exists. Skipping creation."
+fi
 
 # 修改Supervisor默认配置
-echo "ulimit -n 102400" >> /etc/default/supervisor
+if ! grep -q "ulimit -n 102400" /etc/default/supervisor; then
+    echo "ulimit -n 102400" >> /etc/default/supervisor
+    echo "Modified Supervisor default configuration."
+else
+    echo "Supervisor default configuration already modified. Skipping."
+fi
 
 # 重启Supervisor并更新ShadowsocksR配置
 /etc/init.d/supervisor restart
@@ -57,5 +67,6 @@ supervisorctl update
 
 # 添加定时任务，每天早上6点重启ShadowsocksR
 (crontab -l 2>/dev/null | grep -qFx "0 6 * * * supervisorctl restart ssr") || (echo "0 6 * * * supervisorctl restart ssr" | crontab -)
+
 # 结束脚本
 echo "ShadowsocksR 服务已安装并配置成功，定时任务已添加。"
