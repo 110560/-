@@ -12,11 +12,26 @@ fi
 # 更新软件包列表并安装必要的软件
 apt-get update && apt-get install -y git python-pip supervisor vnstat net-tools
 
+# 检查软件包安装是否成功
+if [ $? -ne 0 ]; then
+    echo "Failed to install necessary packages. Aborting."
+    exit 1
+fi
+
 # 安装ShadowsocksR
 cd ~
 git clone https://github.com/110560/ShadowsocksR-py2.7.git shadowsocksr
+if [ $? -ne 0 ]; then
+    echo "Failed to clone ShadowsocksR repository. Aborting."
+    exit 1
+fi
+
 cd shadowsocksr
 pip install -r requirements.txt
+if [ $? -ne 0 ]; then
+    echo "Failed to install dependencies. Aborting."
+    exit 1
+fi
 
 # 配置DNS
 echo -e "options timeout:1 attempts:1 rotate\nnameserver 1.1.1.1\nnameserver 208.67.222.222" >/etc/resolv.conf
