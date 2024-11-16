@@ -14,7 +14,7 @@ apt-get update && apt-get install -y git python-pip supervisor vnstat net-tools
 
 # 安装ShadowsocksR
 cd ~
-git clone https://github.com/ZBrettonYe/ProxyPanel_shadowsocksr.git shadowsocksr
+git clone https://github.com/110560/ShadowsocksR-py2.7.git shadowsocksr
 cd shadowsocksr
 pip install -r requirements.txt
 
