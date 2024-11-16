@@ -16,7 +16,7 @@ apt-get update && apt-get install -y git python-pip supervisor vnstat net-tools
 cd ~
 git clone https://github.com/ZBrettonYe/ProxyPanel_shadowsocksr.git shadowsocksr
 cd shadowsocksr
-pip install -r requestment.txt
+pip install -r requirements.txt
 
 # 配置DNS
 echo -e "options timeout:1 attempts:1 rotate\nnameserver 1.1.1.1\nnameserver 208.67.222.222" >/etc/resolv.conf
