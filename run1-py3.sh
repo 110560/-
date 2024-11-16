@@ -49,12 +49,6 @@ else
     echo "DNS configuration already exists. Skipping."
 fi
 
-# 设置时区为上海
-if ! timedatectl set-timezone Asia/Shanghai; then
-    echo "Failed to set timezone. Aborting."
-    exit 1
-fi
-
 # 配置 Supervisor 管理 ShadowsocksR 服务
 if [ ! -f /etc/supervisor/conf.d/ssr.conf ]; then
     cat > /etc/supervisor/conf.d/ssr.conf <<EOF
