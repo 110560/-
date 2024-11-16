@@ -57,6 +57,5 @@ supervisorctl update
 
 # 添加定时任务，每天早上6点重启ShadowsocksR
 (crontab -l 2>/dev/null | grep -qFx "0 6 * * * supervisorctl restart ssr") || (echo "0 6 * * * supervisorctl restart ssr" | crontab -)
-
 # 结束脚本
 echo "ShadowsocksR 服务已安装并配置成功，定时任务已添加。"
