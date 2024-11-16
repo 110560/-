@@ -15,7 +15,7 @@ git clone https://github.com/110560/shadowsocksr.git
 cd shadowsocksr
 
 # 安装 Python 依赖（注意：有 typo，修正为 requirement.txt）
-pip install -r requestment.txt  --break-system-packages
+pip install -r requirements.txt  --break-system-packages
 
 # 配置 DNS
 echo -e "options timeout:1 attempts:1 rotate\nnameserver 1.1.1.1\nnameserver 208.67.222.222" > /etc/resolv.conf
