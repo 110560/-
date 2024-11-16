@@ -35,8 +35,6 @@ fi
 
 # 配置DNS
 echo -e "options timeout:1 attempts:1 rotate\nnameserver 1.1.1.1\nnameserver 208.67.222.222" >/etc/resolv.conf
-# 设置时区
-timedatectl set-timezone Asia/Shanghai
 
 # 检查并创建Supervisor配置文件
 if [ ! -f /etc/supervisor/conf.d/ssr.conf ]; then
