@@ -1,6 +1,6 @@
 #!/bin/bash
-# 调试版本
 
+# 调试版本
 # 兼容 vnStat 1.18 和 2.6/2.10
 # 检查是否安装了 bc 工具
 if ! command -v bc &> /dev/null; then
@@ -64,7 +64,7 @@ fi
 
 # 将 GiB 转换为 TiB
 if [[ "$tx_unit" == "GiB" ]]; then
-    tx_value=$(echo "scale=2; $tx_value / 1024" | bc)
+    tx_value=$(echo "scale=6; $tx_value / 1024" | bc)
     tx_unit="TiB"
 fi
 
