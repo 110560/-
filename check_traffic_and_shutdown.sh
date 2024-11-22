@@ -57,7 +57,8 @@ fi
 
 # 将 GiB 转换为 TiB
 if [[ "$tx_unit" == "GiB" ]]; then
-    tx_value=$(echo "scale=2; $tx_value / 1024" | bc | awk '{printf "%.2f", $0}')
+    # 保证 tx_value 是浮动的，可以有小数
+    tx_value=$(echo "scale=6; $tx_value / 1024" | bc)
     tx_unit="TiB"
 fi
 
