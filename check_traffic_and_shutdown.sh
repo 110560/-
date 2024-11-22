@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 兼容 vnStat 1.18 和 2.6
+# 兼容 vnStat 1.18 和 2.6/2.10
 # 检查是否安装了 bc 工具
 if ! command -v bc &> /dev/null; then
     echo "bc 工具未安装。请先安装 bc 工具。"
@@ -37,7 +37,7 @@ if [[ "$vnstat_version" == "1.18" ]]; then
         fi
     done)
 else
-    # 适配 vnstat 2.6
+    # 适配 vnstat 2.6 和 2.10
     tx=$(vnstat -m | grep -E "^ *$current_month_v2" | grep -v 'estimated' | awk '{print $5, $6}')
 fi
 
@@ -57,7 +57,6 @@ fi
 
 # 将 GiB 转换为 TiB
 if [[ "$tx_unit" == "GiB" ]]; then
-    # 保证 tx_value 是浮动的，可以有小数
     tx_value=$(echo "scale=6; $tx_value / 1024" | bc)
     tx_unit="TiB"
 fi
@@ -75,8 +74,6 @@ if [[ "$tx_unit" == "TiB" ]]; then
              -d chat_id="${chat_id}" \
              -d text="${message}"
 
-        echo "出站流量达到或超过 $threshold TiB，提醒消息已发送。"
-
         # 创建提醒文件
         touch "$reminder_file"
     fi
@@ -89,8 +86,6 @@ if [[ "$tx_unit" == "TiB" ]]; then
              -d chat_id="${chat_id}" \
              -d text="${shutdown_message}"
 
-        echo "出站流量达到或超过 $shutdown_threshold TiB，系统即将关机提醒已发送。"
-        echo "出站流量达到或超过 $shutdown_threshold TiB，系统即将关机。"
         # 执行关机操作
         shutdown -h now
     else
