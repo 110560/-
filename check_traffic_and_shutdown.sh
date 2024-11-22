@@ -57,8 +57,8 @@ fi
 
 # 检查单位是否为 TiB
 if [[ "$tx_unit" == "TiB" ]]; then
-    threshold="1.90"
-    shutdown_threshold="1.97"
+    threshold="1.90" # 修改提醒阈值
+    shutdown_threshold="1.97" # 修改关机阈值
 
     # 检查是否达到提醒阈值 1.90 TiB
     if (( $(echo "$tx_value >= $threshold" | bc -l) )) && [[ ! -f "$reminder_file" ]]; then
