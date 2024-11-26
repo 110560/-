@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 检查Python版本
-python_version=$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
+python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
 if [[ $python_version =~ ^3\. ]]; then
     echo "Python 3.x detected. Proceeding with installation."
 else
