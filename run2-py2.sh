@@ -9,15 +9,6 @@ else
     exit 1
 fi
 
-# 更新软件包列表并安装必要的软件
-apt-get update && apt-get install -y git python-pip supervisor vnstat net-tools
-
-# 检查软件包安装是否成功
-if [ $? -ne 0 ]; then
-    echo "Failed to install necessary packages. Aborting."
-    exit 1
-fi
-
 # 安装ShadowsocksR
 cd ~
 git clone https://github.com/110560/ShadowsocksR-py2.7.git shadowsocksr
