@@ -18,6 +18,7 @@ if [ $? -ne 0 ]; then
 fi
 
 cd shadowsocksr
+apt-get install python-pip -y
 pip install -r requirements.txt
 if [ $? -ne 0 ]; then
     echo "Failed to install dependencies. Aborting."
