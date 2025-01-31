@@ -1,7 +1,6 @@
 apt-get install git -y
 cd ~
-git clone https://github.com/ZBrettonYe/ProxyPanel_shadowsocksr.git
-mv ProxyPanel_shadowsocksr shadowsocksr 
+git clone -b 1 https://github.com/110560/shadowsocksr.git
 cd shadowsocksr
 apt-get install python-pip -y
 pip install -r requestment.txt
