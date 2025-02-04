@@ -98,5 +98,21 @@ supervisorctl update
 cron_job="0 6 * * * supervisorctl restart ssr"
 (crontab -l 2>/dev/null | grep -qFx "$cron_job") || (echo "$cron_job" | crontab -)
 
-# 结束脚本
-echo "ShadowsocksR 服务已安装并配置成功，Supervisor 也已检查/安装，DNS 已覆盖，定时任务已添加。"
+# 获取 Debian 版本
+debian_version=$(grep "PRETTY_NAME" /etc/os-release | cut -d '"' -f2)
+
+# 获取 Python 版本
+python_version=$(python2 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
+
+# 确认定时任务是否成功添加
+if crontab -l | grep -q "0 6 \* \* \* supervisorctl restart ssr"; then
+    cron_status="已成功添加"
+else
+    cron_status="未能成功添加，请手动检查"
+fi
+
+# 结束脚本，输出最终信息
+echo -e "\nShadowsocksR 服务已安装并配置成功！"
+echo "Debian 系统版本: $debian_version"
+echo "Python 版本: $python_version"
+echo "定时任务状态: $cron_status"
