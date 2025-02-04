@@ -1,0 +1,28 @@
+这里说下 使用Supervisor守护进程启动ssr
+# 安装
+apt-get install supervisor -y
+
+# 写入配置
+vi /etc/supervisor/conf.d/ssr.conf
+
+# 写入以下内容
+[program:ssr]
+command=python /root/shadowsocks/server.py 
+autorestart=true
+autostart=true
+user=root
+
+# 重启Supervisor服务。
+/etc/init.d/supervisor restart
+
+# 重启 ssr
+supervisorctl restart ssr
+
+# 查看Supervisor服务运行状态。
+supervisorctl status
+
+# 如果遇到问题，可以检查日志：
+supervisorctl tail -f ssr stderr
+
+# 如果使用supervisor进程守护，需要修改文件vi /etc/default/supervisor，添加一行：
+ulimit -n 1024000
