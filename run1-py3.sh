@@ -35,6 +35,9 @@ fi
 
 cd ~/shadowsocksr
 
+# 更新 pip
+python3 -m pip install --upgrade pip
+
 # 安装 Python 依赖
 if ! pip install -r requirements.txt --break-system-packages; then
     echo "Failed to install dependencies. Aborting."
