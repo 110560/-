@@ -23,3 +23,7 @@ wget https://raw.githubusercontent.com/110560/csh/master/run1-py3.sh && bash run
 ```bash
 wget https://raw.githubusercontent.com/110560/csh/master/pyenv.sh && bash pyenv.sh
 ```
+
+### **4 TCP 优化**
+```bash <(curl -L -s https://raw.githubusercontent.com/110560/csh/master/TCP-Optimization) 
+```
